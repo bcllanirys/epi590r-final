@@ -1,0 +1,14 @@
+---
+title: "epi590r"
+format: html
+editor: visual
+echo: false 
+---
+
+```{r}
+install.packages("medicaldata")
+library(medicaldata)
+data(package="medicaldata")
+indometh <- medicaldata::indometh
+
+```
