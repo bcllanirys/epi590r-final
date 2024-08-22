@@ -6,9 +6,22 @@ echo: false
 ---
 
 ```{r}
+#downloading packages
+install.packages("tidyverse")
+install.packages("gtsummary")
+library(tidyverse)
+library(gtsummary)
+```
+
+```{r}
+#uploading indometh dataset
 install.packages("medicaldata")
 library(medicaldata)
 data(package="medicaldata")
 indometh <- medicaldata::indometh
+
+```
+
+```{r}
 
 ```
