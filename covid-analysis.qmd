@@ -29,19 +29,33 @@ covid <- as.data.frame(covid)
 
 ```{r}
 library(gtsummary)
+library(dplyr)
+
+covid <- covid %>%
+  mutate(orderset = recode(orderset,
+                      `0` = "No",
+                      `1` = "Yes"),
+    drive_thru_ind = recode(drive_thru_ind,
+                            `0` = "No",
+                            `1` = "Yes"))
+ 
 
 
 
-tbl_summary(covid,by=gender,include=c(pan_day, test_id, clinic_name,result, demo_group, age,drive_thru_ind,ct_result, orderset,payor_group, patient_class, col_rec_tat, rec_ver_tat))
-	label = list(pan_day ~ "# of Days tested after pandemic",
-							 test_id ~ "Type of test",
-							 clinic_name ~ "Clinic",
-							 demo_group ~ "Subject Groups",
+tbl_summary(data=covid,
+						by=gender,
+						include=c(pan_day, test_id, clinic_name,result, demo_group, age,drive_thru_ind,ct_result, orderset,payor_group, patient_class, col_rec_tat, rec_ver_tat),
+	label = list(pan_day ~ "# of days tested after pandemic start",
+							 test_id ~ "type of test",
+							 clinic_name ~ "clinic",
+							 demo_group ~ "subject groups",
 							 drive_thru_ind ~ "Collected at a drive-thru site?",
-							 ct_result ~ "PCR threshold", orderset="Collected via orderset?", 
-							 patient_class ~ "Subject disposition", 
+							 ct_result ~ "PCR threshold", orderset~"Collected via orderset?", 
+							 patient_class ~ "subject disposition", 
 							 col_rec_tat ~ "Time elapsed on collection and receive", 
-							 rec_ver_tat ~ "Time elapsed on receive and verification")
+							 rec_ver_tat ~ "Time elapsed on receive and verification"))
+
+ 
 ```
 
 ```{r}
