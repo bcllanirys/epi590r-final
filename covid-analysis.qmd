@@ -11,7 +11,7 @@ echo: false
 install.packages("tidyverse")
 install.packages("gtsummary")
 library(tidyverse)
-library(gtsummary)
+
 ```
 
 ```{r}
@@ -31,14 +31,17 @@ covid <- as.data.frame(covid)
 library(gtsummary)
 library(dplyr)
 
+
+
 covid <- covid %>%
-  mutate(orderset = recode(orderset,
+  mutate(
+    orderset = recode(as.character(orderset),
                       `0` = "No",
                       `1` = "Yes"),
-    drive_thru_ind = recode(drive_thru_ind,
+    drive_thru_ind = recode(as.character(drive_thru_ind),
                             `0` = "No",
                             `1` = "Yes"))
- 
+#did not get counts of yes/no for variables above and check threshold variable
 
 
 
