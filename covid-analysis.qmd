@@ -1,4 +1,5 @@
 ---
+name: "Bella G"
 title: "epi590r"
 format: html
 editor: visual
@@ -18,8 +19,13 @@ library(gtsummary)
 install.packages("medicaldata")
 library(medicaldata)
 data(package="medicaldata")
-indometh <- medicaldata::indometh
+covid <- medicaldata::covid_testing
 
+```
+
+```{r}
+library(gtsummary)
+tbl_summary()
 ```
 
 ```{r}
