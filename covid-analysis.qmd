@@ -89,7 +89,7 @@ tbl_uvregression(
     payor_group ~ "Paying Method",
     demo_group ~ "Subject Groups",
     patient_class ~ "Subject Disposition"
-  )
+  ) 
 )
 
 
