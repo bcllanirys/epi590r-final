@@ -44,8 +44,6 @@ write_rds(covid_clean, here::here("R", "covid_clean.rds"))
 write_csv(covid_clean, here::here("Data", "clean", "covid_clean.csv"))
 ```
 
-fixing repository
-
 ```{r}
 library(gtsummary)
 library(broom)
