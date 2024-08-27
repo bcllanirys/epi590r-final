@@ -1,4 +1,4 @@
-------------------------------------------------------------------------
+10
 
 ---
 name: "Bella G"
@@ -49,6 +49,8 @@ write_csv(covid_clean, here::here("Data", "clean", "covid_clean.csv"))
 ```{r}
 library(gtsummary)
 library(broom)
+
+
  tbl_summary(
   data = covid_clean,
   by = gender,
@@ -70,19 +72,25 @@ library(broom)
 install.packages("Rcpp", dependencies = TRUE, INSTALL_opts = '--no-lock')1
 
 ```{r}
-tbl_regression(
-  logistic_model, 
-  exponentiate = TRUE,
+
+
+covid_clean$result_binary <- ifelse(covid_clean$result == "positive", 1, 0)
+
+tbl_uvregression(
+  data = covid_clean,
+  y = result_binary,
+  method = glm,
+  method.args = list(family = binomial()),
+  include = c(result_binary, age, pan_day,clinic_name, payor_group, demo_group, patient_class),
   label = list(
     age ~ "Age",
-    result ~ "Test Result",
     pan_day ~ "# of Days Tested After Pandemic Start",
-    test_id ~ "Type of Test",
     clinic_name ~ "Clinic",
     payor_group ~ "Paying Method",
-    demo_group ~ "Subject Groups", 
+    demo_group ~ "Subject Groups",
     patient_class ~ "Subject Disposition"
   )
 )
+
 
 ```
