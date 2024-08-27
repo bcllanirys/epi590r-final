@@ -69,21 +69,20 @@ library(broom)
   modify_footnote(update = everything() ~ NA) 
 ```
 
-install.packages("Rcpp", dependencies = TRUE, INSTALL_opts = '--no-lock')1
-
 ```{r}
 
 
-covid_clean$result_binary <- ifelse(covid_clean$result == "positive", 1, 0)
 
-tbl_uvregression(
+#regression model
+#| label: tbl-descr
+#| tbl-cap: "Descriptive statistics"
+#| output-location: slide
+model<- tbl_uvregression(
   data = covid_clean,
-  y = result_binary,
-  method = glm,
-  method.args = list(family = binomial()),
-  include = c(result_binary, age, pan_day,clinic_name, payor_group, demo_group, patient_class),
+  y = age,
+  method = lm,
+  include = c(result, age, pan_day,clinic_name, payor_group, demo_group, patient_class),
   label = list(
-    age ~ "Age",
     pan_day ~ "# of Days Tested After Pandemic Start",
     clinic_name ~ "Clinic",
     payor_group ~ "Paying Method",
@@ -91,6 +90,8 @@ tbl_uvregression(
     patient_class ~ "Subject Disposition"
   ) 
 )
+#create function
+inline_text(model, variable="pan_day", column="stat_1")
 
 
 ```
