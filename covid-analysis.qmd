@@ -67,6 +67,8 @@ library(broom)
   modify_footnote(update = everything() ~ NA) 
 ```
 
+create function
+
 ```{r}
 
 
@@ -88,8 +90,14 @@ model<- tbl_uvregression(
     patient_class ~ "Subject Disposition"
   ) 
 )
-#create function
-inline_text(model, variable="pan_day", column="stat_1")
-
-
+#inline text
+ci<-inline_text(model, variable="pan_day", pattern = "{estimate} ({conf.low}, {conf.high})")
+ # mean function
+mean <- function(pan_day) {
+	n <- length(pan_day)
+	mean_val <- sum(pan_day) / n
+	return(mean_val)
+}
 ```
+
+We are 95% confident that the true mean height of the population lies between (`ci`)
