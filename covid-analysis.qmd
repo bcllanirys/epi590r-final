@@ -1,3 +1,5 @@
+------------------------------------------------------------------------
+
 ---
 name: "Bella G"
 title: "epi590r"
@@ -8,14 +10,16 @@ echo: false
 
 ```{r}
 #downloading packages
-install.packages("tidyverse")
-install.packages("gtsummary")
-library(tidyverse)
+ 
 
+library(readr)
+library(tidyverse)
+library(gtsummary)
+library(dplyr)
 ```
 
 ```{r}
-#uploading indometh dataset
+#uploading covid dataset
 install.packages("medicaldata")
 library(medicaldata)
 data(package="medicaldata")
@@ -23,44 +27,62 @@ covid <- medicaldata::covid_testing
 class(covid)
 covid <- as.data.frame(covid)
 
+write_csv(covid, here::here("Data", "raw", "covid.csv"))
 
 
+#cleaning data
+covid_clean <- covid |>
+  mutate(clinic_name = case_when(str_detect(clinic_name, "onc") ~ "oncology",str_detect(clinic_name, "mri") ~ "MRI", str_detect(clinic_name, "onc") ~ "oncology", str_detect(clinic_name, "rad") ~ "diagnosis radiology",str_detect(clinic_name, "urg") ~ "urgent care",
+           str_detect(clinic_name, "lab") ~ "laboratory",str_detect(clinic_name, "ntwk") ~ "care network",
+           str_detect(clinic_name, "hosp") ~ "hospital",
+           str_detect(clinic_name, "ward") ~ "ward",
+           TRUE ~ clinic_name 
+         ),
+         clinic_name = fct_lump(clinic_name, n = 10))
+
+write_rds(covid_clean, here::here("R", "covid_clean.rds"))
+write_csv(covid_clean, here::here("Data", "clean", "covid_clean.csv"))
 ```
+
+1
 
 ```{r}
 library(gtsummary)
-library(dplyr)
-
-
-
-covid <- covid %>%
-  mutate(
-    orderset = recode(as.character(orderset),
-                      `0` = "No",
-                      `1` = "Yes"),
-    drive_thru_ind = recode(as.character(drive_thru_ind),
-                            `0` = "No",
-                            `1` = "Yes"))
-#did not get counts of yes/no for variables above and check threshold variable
-
-
-
-tbl_summary(data=covid,
-						by=gender,
-						include=c(pan_day, test_id, clinic_name,result, demo_group, age,drive_thru_ind,ct_result, orderset,payor_group, patient_class, col_rec_tat, rec_ver_tat),
-	label = list(pan_day ~ "# of days tested after pandemic start",
-							 test_id ~ "type of test",
-							 clinic_name ~ "clinic",
-							 demo_group ~ "subject groups",
-							 drive_thru_ind ~ "Collected at a drive-thru site?",
-							 ct_result ~ "PCR threshold", orderset~"Collected via orderset?", 
-							 patient_class ~ "subject disposition", 
-							 col_rec_tat ~ "Time elapsed on collection and receive", 
-							 rec_ver_tat ~ "Time elapsed on receive and verification"))
-
- 
+library(broom)
+ tbl_summary(
+  data = covid_clean,
+  by = gender,
+  include = c(age, result, pan_day, test_id, clinic_name, payor_group, demo_group, patient_class),
+  label = list(
+    payor_group ~ "Paying method",
+    pan_day ~ "# of days tested after pandemic start",
+    test_id ~ "Type of test",
+    clinic_name ~ "Clinic",
+    demo_group ~ "Subject groups", 
+    patient_class ~ "Subject disposition" 
+  ),
+  missing = "no")   |> 
+ 	add_overall(col_label = "**Total**") |> 
+  bold_labels() |> 
+  modify_footnote(update = everything() ~ NA) 
 ```
 
+install.packages("Rcpp", dependencies = TRUE, INSTALL_opts = '--no-lock')1
+
 ```{r}
+tbl_regression(
+  logistic_model, 
+  exponentiate = TRUE,
+  label = list(
+    age ~ "Age",
+    result ~ "Test Result",
+    pan_day ~ "# of Days Tested After Pandemic Start",
+    test_id ~ "Type of Test",
+    clinic_name ~ "Clinic",
+    payor_group ~ "Paying Method",
+    demo_group ~ "Subject Groups", 
+    patient_class ~ "Subject Disposition"
+  )
+)
 
 ```
