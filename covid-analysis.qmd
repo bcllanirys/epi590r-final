@@ -67,31 +67,48 @@ library(broom)
   modify_footnote(update = everything() ~ NA) 
 ```
 
-create function
-
 ```{r}
 
 
-
 #regression model
-#| label: tbl-descr
-#| tbl-cap: "Descriptive statistics"
-#| output-location: slide
-model<- tbl_uvregression(
+model <- tbl_uvregression(
   data = covid_clean,
-  y = age,
+  y = age, 
   method = lm,
-  include = c(result, age, pan_day,clinic_name, payor_group, demo_group, patient_class),
+  include = c(result, pan_day, clinic_name, payor_group, demo_group, patient_class),  
   label = list(
     pan_day ~ "# of Days Tested After Pandemic Start",
     clinic_name ~ "Clinic",
     payor_group ~ "Paying Method",
     demo_group ~ "Subject Groups",
     patient_class ~ "Subject Disposition"
-  ) 
+  )
 )
+
+# To view the model output
+model
+
+
+
+```
+
+We are 95% confident that the true mean height of the population lies between (`ci`)
+
+```{r}
+#i stopprf here, fix?
+#| label: fig-hist
+#| fig-cap: "This is a histogram"
+hist(covid_clean$age, main= "Histogram of Age", 
+     xlab = "Age", 
+     ylab = "Frequency", 
+     col = "coral",
+     border = "black")
+```
+
+```{r}
 #inline text
 ci<-inline_text(model, variable="pan_day", pattern = "{estimate} ({conf.low}, {conf.high})")
+
  # mean function
 mean <- function(pan_day) {
 	n <- length(pan_day)
@@ -99,5 +116,3 @@ mean <- function(pan_day) {
 	return(mean_val)
 }
 ```
-
-We are 95% confident that the true mean height of the population lies between (`ci`)
