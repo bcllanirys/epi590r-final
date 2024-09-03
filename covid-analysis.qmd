@@ -1,5 +1,3 @@
-10
-
 ---
 name: "Bella G"
 title: "epi590r"
@@ -16,6 +14,8 @@ library(readr)
 library(tidyverse)
 library(gtsummary)
 library(dplyr)
+install.packages("broom.helpers")
+library(broom.helpers)
 ```
 
 ```{r}
@@ -47,6 +47,7 @@ write_csv(covid_clean, here::here("Data", "clean", "covid_clean.csv"))
 ```{r}
 library(gtsummary)
 library(broom)
+library(broom.helpers)
 
 
  tbl_summary(
@@ -63,39 +64,28 @@ library(broom)
   ),
   missing = "no")   |> 
  	add_overall(col_label = "**Total**") |> 
-  bold_labels() |> 
-  modify_footnote(update = everything() ~ NA) 
+  bold_labels() 
 ```
 
 ```{r}
-
-
 #regression model
+
 model <- tbl_uvregression(
   data = covid_clean,
-  y = age, 
+  x=pan_day, 
   method = lm,
-  include = c(result, pan_day, clinic_name, payor_group, demo_group, patient_class),  
-  label = list(
-    pan_day ~ "# of Days Tested After Pandemic Start",
-    clinic_name ~ "Clinic",
-    payor_group ~ "Paying Method",
-    demo_group ~ "Subject Groups",
-    patient_class ~ "Subject Disposition"
-  )
+  include = c(age, clinic_name, payor_group, demo_group, patient_class)
 )
 
-# To view the model output
-model
 
-
+inline_text(model, variable= "patient_class")
 
 ```
 
 We are 95% confident that the true mean height of the population lies between (`ci`)
 
 ```{r}
-#i stopprf here, fix?
+#i stopped here
 #| label: fig-hist
 #| fig-cap: "This is a histogram"
 hist(covid_clean$age, main= "Histogram of Age", 
