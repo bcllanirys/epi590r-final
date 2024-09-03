@@ -74,43 +74,37 @@ library(broom.helpers)
 ```{r}
 #regression model
 library(cardx)
+
 regressionmodel <- tbl_uvregression(
   covid_clean,
   y=age, 
   method = lm,
-  include = c(age, clinic_name, gender, payor_group, demo_group, patient_class)
+  include = c(age, clinic_name,result, gender, payor_group, demo_group, patient_class)
 )
+
 regressionmodel
 
-inline_text(model, variable= "patient_class")
+#fix below
+
+inline_text(regressionmodel, variable= "payor_group")
 
 ```
 
 ```{r}
-#regression model
-#| label: tbl-descr
-#| tbl-cap: "Descriptive statistics"
-#| output-location: slide
-model<- tbl_uvregression(
-  data = covid_clean,
-  y = result_binary,
-  method = glm,
-  method.args = list(family = binomial()),
-  include = c(result_binary, age, pan_day,clinic_name, payor_group, demo_group, patient_class),
-  y = age,
-  method = lm,
-  include = c(result, age, pan_day,clinic_name, payor_group, demo_group, patient_class),
-  label = list(
-    age ~ "Age",
-    pan_day ~ "# of Days Tested After Pandemic Start",
-    clinic_name ~ "Clinic",
-    payor_group ~ "Paying Method",
-    demo_group ~ "Subject Groups",
-    patient_class ~ "Subject Disposition"
-  ) 
-)
-#create function
-inline_text(model, variable="pan_day", column="stat_1")
+#create function of sample std
+stdfunction <- function(col_rec_tat) {
+  n <- length(col_rec_tat)            
+  mean <- sum(col_rec_tat) / n          
+  diffsq <- (col_rec_tat - mean)^2       
+  variance <- sum(diffsq) / (n - 1)      
+  std_val <- sqrt(variance)                      
+  
+  return(std_val)
+}
+
+sd(covid_clean$col_rec_tat, na.rm=TRUE)
+stdfunction(covid_clean$col_rec_tat)
+
 ```
 
 We are 95% confident that the true mean height of the population lies between (`ci`)
@@ -130,10 +124,6 @@ hist(covid_clean$age, main= "Histogram of Age",
 #inline text
 ci<-inline_text(model, variable="pan_day", pattern = "{estimate} ({conf.low}, {conf.high})")
 
- # mean function
-mean <- function(pan_day) {
-	n <- length(pan_day)
-	mean_val <- sum(pan_day) / n
-	return(mean_val)
+
 }
 ```
