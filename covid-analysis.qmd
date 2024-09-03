@@ -16,6 +16,8 @@ library(gtsummary)
 library(dplyr)
 install.packages("broom.helpers")
 library(broom.helpers)
+install.packages("cards")
+library("cards")
 ```
 
 ```{r}
@@ -50,7 +52,7 @@ library(broom)
 library(broom.helpers)
 
 
- tbl_summary(
+ table <- tbl_summary(
   data = covid_clean,
   by = gender,
   include = c(age, result, pan_day, test_id, clinic_name, payor_group, demo_group, patient_class),
@@ -65,21 +67,50 @@ library(broom.helpers)
   missing = "no")   |> 
  	add_overall(col_label = "**Total**") |> 
   bold_labels() 
+ 
+ table
 ```
 
 ```{r}
 #regression model
-
-model <- tbl_uvregression(
-  data = covid_clean,
-  x=pan_day, 
+library(cardx)
+regressionmodel <- tbl_uvregression(
+  covid_clean,
+  y=age, 
   method = lm,
-  include = c(age, clinic_name, payor_group, demo_group, patient_class)
+  include = c(age, clinic_name, gender, payor_group, demo_group, patient_class)
 )
-
+regressionmodel
 
 inline_text(model, variable= "patient_class")
 
+```
+
+```{r}
+#regression model
+#| label: tbl-descr
+#| tbl-cap: "Descriptive statistics"
+#| output-location: slide
+model<- tbl_uvregression(
+  data = covid_clean,
+  y = result_binary,
+  method = glm,
+  method.args = list(family = binomial()),
+  include = c(result_binary, age, pan_day,clinic_name, payor_group, demo_group, patient_class),
+  y = age,
+  method = lm,
+  include = c(result, age, pan_day,clinic_name, payor_group, demo_group, patient_class),
+  label = list(
+    age ~ "Age",
+    pan_day ~ "# of Days Tested After Pandemic Start",
+    clinic_name ~ "Clinic",
+    payor_group ~ "Paying Method",
+    demo_group ~ "Subject Groups",
+    patient_class ~ "Subject Disposition"
+  ) 
+)
+#create function
+inline_text(model, variable="pan_day", column="stat_1")
 ```
 
 We are 95% confident that the true mean height of the population lies between (`ci`)
