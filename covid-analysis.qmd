@@ -95,7 +95,7 @@ stdfunction <- function(col_rec_tat) {
 std <-sd(covid_clean$col_rec_tat, na.rm=TRUE)
 
 
-stdfunction(covid_clean$col_rec_tat)
+std_function <- stdfunction(covid_clean$col_rec_tat)
 
 
 
@@ -103,7 +103,7 @@ stdfunction(covid_clean$col_rec_tat)
 
 See @tbl-lm for the regression model for this data
 
-The standard deviation of the time elapsed between collect time and receive time is (`r std`)
+The standard deviation of the time elapsed between collect time and receive time is (`r std_function`)
 
 ```{r}
 #| label: fig-hist
