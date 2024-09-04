@@ -4,7 +4,7 @@ title: "EPI 590R R Project"
 format: html
 ---
 
-***For my final project I am using the COVID-19 testing cohort dataset from Amrom E. Obstfeld that was collected from the Children's Hospital of Pennsylvania. This dataset gives a glimpse of the number of COVID-tests administered from the start to the pandemic to day 107 of the pandemic and the results of the test. Other variables are explored in this cohort study as well. This dataset was found in the {medicaldata} package in R that was developed by Peter Higgins.***
+***For my final project I am using the COVID-19 testing cohort dataset from Amrom E. Obstfeld that was collected from the Children's Hospital of Pennsylvania. This dataset gives a glimpse of the number of COVID-tests administered from the start to the pandemic to day 107 of the pandemic and the results of the test in that hospital. Other variables are explored in this cohort study as well. This dataset was found in the {medicaldata} package in R that was developed by Peter Higgins.***
 
 ```{r}
 library(readr)
