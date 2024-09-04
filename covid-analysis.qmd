@@ -10,8 +10,6 @@ execute:
 ***For my final project I am using the COVID-19 testing cohort dataset from Amrom E. Obstfeld that was collected from the Children's Hospital of Pennsylvania. This dataset was found in the {medicaldata} package in R that was developed by Peter Higgins.***
 
 ```{r}
-#| output: false
-#| eval: true
 library(readr)
 library(tidyverse)
 library(gtsummary)
@@ -23,7 +21,6 @@ library(broom)
 ```
 
 ```{r}
-#| output: false
 install.packages("medicaldata")
 library(medicaldata)
 data(package="medicaldata")
@@ -65,14 +62,15 @@ write_csv(covid_clean, here::here("Data", "clean", "covid_clean.csv"))
   ),
   missing_text = "Missing")   |> 
  	add_overall(col_label = "**Total**") |> 
-  bold_labels()
+  bold_labels() |> 
+  	add_overall(last= TRUE)
  table1 
-inline_text(table1,variable = "age", column="stat_0")
+mean_age <- inline_text(table1,variable = "age", column="stat_0")
 ```
 
 See @tbl-first for descriptive statistic of the data
 
-The IQR age of those taking a COVID-19 test is (`r inline_text(table1,variable = "age", column="stat_0")`)
+The IQR age of those taking a COVID-19 test is (`rmean_age`)
 
 ```{r}
 #| label: tbl-lm
@@ -108,16 +106,17 @@ stdfunction(covid_clean$col_rec_tat)
 
 ```
 
-The standard deviation of the time elapsed between collect time and receive time is `r std`
+The standard deviation of the time elapsed between collect time and receive time is (`rstd`)
 
 ```{r}
 #| label: fig-hist
 #| fig-cap: "This is a histogram"
-hist(covid_clean$age, 
+figure1 <- hist(covid_clean$age,main="Histogram of Age", 
      xlab = "Age", 
      ylab = "Frequency", 
      col = "coral",
      border = "black")
+
 ```
 
-see @fig-hist for a histogram of the age in the COVID
+See @fig-hist for a histogram of the age in the COVID dataset
