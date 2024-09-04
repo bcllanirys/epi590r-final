@@ -15,11 +15,11 @@ library(broom.helpers)
 library(cards)
 library(cardx)
 library(broom)
+library(medicaldata)
 ```
 
 ```{r}
 #| message: false
-library(medicaldata)
 data(package="medicaldata")
 covid <- medicaldata::covid_testing
 class(covid)
@@ -76,13 +76,12 @@ regressionmodel <- tbl_uvregression(
   y=age, 
   method = lm,
   include = c(age, clinic_name,result, gender, payor_group, demo_group, patient_class))
-
+regressionmodel
 
 ```
 
 ```{r}
 #create function of sample std
-
 stdfunction <- function(col_rec_tat) {
   n <- length(col_rec_tat)            
   mean <- sum(col_rec_tat) / n          
