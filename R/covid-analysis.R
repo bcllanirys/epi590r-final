@@ -1,17 +1,10 @@
----
-author: "Bella Garcia"
-title: "EPI 590R R Project"
-format: html
-execute: 
-  eval: false
-  echo: false
----
 
-***For my final project I am using the COVID-19 testing cohort dataset from Amrom E. Obstfeld that was collected from the Children's Hospital of Pennsylvania. This dataset was found in the {medicaldata} package in R that was developed by Peter Higgins.***
+install.packages("pacman")
+library(pacman)
 
-```{r}
-#| output: false
-#| eval: true
+# Install and load multiple packages
+p_load(gtsummary,readr, dplyr, tidyverse, dplyr,broom.helpers,cardx, broom, cards)
+
 library(readr)
 library(tidyverse)
 library(gtsummary)
@@ -20,10 +13,7 @@ library(broom.helpers)
 library(cards)
 library(cardx)
 library(broom)
-```
 
-```{r}
-#| output: false
 install.packages("medicaldata")
 library(medicaldata)
 data(package="medicaldata")
@@ -40,17 +30,15 @@ covid_clean <- covid |>
            str_detect(clinic_name, "lab") ~ "laboratory",str_detect(clinic_name, "ntwk") ~ "care network",
            str_detect(clinic_name, "hosp") ~ "hospital",
            str_detect(clinic_name, "ward") ~ "ward",
-           TRUE ~ clinic_name 
+           TRUE ~ clinic_name
          ),
          clinic_name = fct_lump(clinic_name, n = 10))
 
 write_rds(covid_clean, here::here("Data", "clean", "covid_clean.rds"))
 write_csv(covid_clean, here::here("Data", "clean", "covid_clean.csv"))
-```
 
-```{r}
-#| label: tbl-first
-#| tbl-cap: "Descriptive Statistics"
+
+library(gtsummary,glue)
   table1 <- tbl_summary(
   covid_clean,
   by = gender,
@@ -60,64 +48,45 @@ write_csv(covid_clean, here::here("Data", "clean", "covid_clean.csv"))
     pan_day ~ "# of days tested after pandemic start",
     test_id ~ "Type of test",
     clinic_name ~ "Clinic",
-    demo_group ~ "Subject groups", 
-    patient_class ~ "Subject disposition" 
+    demo_group ~ "Subject groups",
+    patient_class ~ "Subject disposition"
   ),
-  missing_text = "Missing")   |> 
- 	add_overall(col_label = "**Total**") |> 
+  missing_text = "Missing")   |>
+ 	add_overall(col_label = "**Total**") |>
   bold_labels()
- table1 
-inline_text(table1,variable = "age", column="stat_0")
-```
+ table1
+mean_age <-inline_text(table1,variable = "age", column="stat_0")
 
-See @tbl-first for descriptive statistic of the data
 
-The IQR age of those taking a COVID-19 test is (`r inline_text(table1,variable = "age", column="stat_0")`)
-
-```{r}
 #| label: tbl-lm
 #| tbl-cap: "This is a regression model"
 regressionmodel <- tbl_uvregression(
   covid_clean,
-  y=age, 
+  y=age,
   method = lm,
   include = c(age, clinic_name,result, gender, payor_group, demo_group, patient_class))
+regressionmodel
 
 
-```
-
-```{r}
 #create function of sample std
 
 stdfunction <- function(col_rec_tat) {
-  n <- length(col_rec_tat)            
-  mean <- sum(col_rec_tat) / n          
-  diffsq <- (col_rec_tat - mean)^2       
-  variance <- sum(diffsq) / (n - 1)      
-  std_val <- sqrt(variance)                      
-  
+  n <- length(col_rec_tat)
+  mean <- sum(col_rec_tat) / n
+  diffsq <- (col_rec_tat - mean)^2
+  variance <- sum(diffsq) / (n - 1)
+  std_val <- sqrt(variance)
+
   return(std_val)
 }
 
 std <-sd(covid_clean$col_rec_tat, na.rm=TRUE)
 
 
-stdfunction(covid_clean$col_rec_tat)
-
-
-
-```
-
-The standard deviation of the time elapsed between collect time and receive time is `r std`
-
-```{r}
-#| label: fig-hist
-#| fig-cap: "This is a histogram"
-hist(covid_clean$age, 
-     xlab = "Age", 
-     ylab = "Frequency", 
+hist(covid_clean$age,
+     xlab = "Age",
+     ylab = "Frequency",
      col = "coral",
      border = "black")
-```
 
-see @fig-hist for a histogram of the age in the COVID
+
